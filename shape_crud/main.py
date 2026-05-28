@@ -13,6 +13,7 @@ def handle_create_shape(sm, shape_choice):
             try:
                 arg_input = float(input(f'Enter the {arg}: '))
                 if arg_input <= 0:
+                    print("You can enter only positive numbers.")
                     break
                 shape_args[shape_choice[user_shape_choice]][arg] = arg_input
                 sm.create_shape(shape_args)
@@ -35,6 +36,7 @@ def handle_update_shape(sm):
             for arg in shape_args:
                 new_arg = float(input(f"Enter new {arg}: "))
                 if new_arg <= 0:
+                    print("You can enter only positive numbers.")
                     break
                 update_args[arg] = new_arg
             sm.update_shape(update_id, update_args)
