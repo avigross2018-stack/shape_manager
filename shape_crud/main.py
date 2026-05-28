@@ -2,22 +2,25 @@ from shape_manager import ShapeManager, get_logger
 
 logger = get_logger(__name__)
 
-def handle_create_shape(sm, shape_choice):
+def handle_create_shape(sm):
+    shape_choice = {'1' : 'square', '2' : 'circle', '3' : 'rectangle'}
     shape_args = {}
     print("Choose the shape.")
     print("1) Square. \n2) Circle. \n3) Rectangle.")
     user_shape_choice = input("Enter a shape: \n")
+
     if user_shape_choice in shape_choice:   # check if user enter correct input.
-        shape_args[shape_choice[user_shape_choice]] = {}  # update the shape name as a key DICT.
-        for arg in sm.SHAPE_CLS[shape_choice[user_shape_choice]]['arg']:   # iter in amount of args for shape.
+        shape_type = shape_choice[user_shape_choice]   # hold the name of the shape.
+        shape_args[shape_type] = {}  # update the shape name as a key DICT.
+
+        for arg in sm.SHAPE_CLS[shape_type]['arg']:   # iter in amount of args for shape.
             logger.info("User trying to create shape.")
             try:
                 arg_input = float(input(f'Enter the {arg}: '))
                 if arg_input <= 0:
                     print("You can enter only positive numbers.")
                     break
-                shape_args[shape_choice[user_shape_choice]][arg] = arg_input   # update arg key with INT value.
-                
+                shape_args[shape_type][arg] = arg_input   # update arg key with INT value.                
             except ValueError:
                 logger.error("User enter STR value not INT")
                 print("You can enter only numbers.")
@@ -32,6 +35,7 @@ def handle_create_shape(sm, shape_choice):
 
 def handle_update_shape(sm):
     logger.info("User trying to update shape.")
+    
     try:
         update_id = int(input("Enter the ID you want to update: "))
         shape_args = sm.get_arg_by_id(update_id)   # getting LIST of args for shape.
@@ -52,7 +56,7 @@ def handle_update_shape(sm):
 def main():
     sm = ShapeManager()
     flag = True
-    shape_choice = {'1' : 'square', '2' : 'circle', '3' : 'rectangle'}
+    
     while flag:
         print("=== Shape Manager ===")
         print("1) Show all Shapes. \n2) Create new shape. \n3) Update Shape. \n4) Delete shape. \n5) Exit")
@@ -61,7 +65,7 @@ def main():
             case "1":
                 sm.get_all_shapes()
             case "2":
-                handle_create_shape(sm, shape_choice)
+                handle_create_shape(sm)
             case "3":
                 handle_update_shape(sm)
             case "4":
