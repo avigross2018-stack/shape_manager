@@ -44,3 +44,7 @@ class Rectangle(Shape):
             "area" : self.get_area(),
             "perimeter" : self.get_perimeter()
         }}
+
+if __name__ == '__main__':   # validate Class.
+    r = Rectangle(1, 'rectangle', 5, 6)
+    print(r.to_dict())

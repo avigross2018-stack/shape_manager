@@ -4,7 +4,7 @@ from square import Square
 from circle import Circle
 from rectangle import Rectangle
 
-def get_logger():
+def get_logger(name):
     """Configures and returns a logger instance for the application.
 
     Sets up basic logging configurations with INFO level, logs to 'logger.log',
@@ -15,11 +15,11 @@ def get_logger():
     """
     logging.basicConfig(level=logging.INFO,
                         filename='logger.log',
-                        format='%(asctime)s | %(levelname)s | %(message)s')
-    logger = logging.getLogger(__name__)
+                        format='%(asctime)s | %(name)s | %(levelname)s | %(message)s')
+    logger = logging.getLogger(name)
     return logger
 
-logger = get_logger()
+logger = get_logger(__name__)
 
 JSON_FILENAME = 'shapes.json'
 
@@ -57,11 +57,11 @@ class ShapeManager:
             shape (dict): A dictionary containing the shape name as a key and its 
                         parameters as a nested dictionary value.
         """
-        shape_name = next(iter(shape))
-        shape_arg = shape[shape_name]
-        the_shape = self.SHAPE_CLS[shape_name]['cls'](self.get_id(), shape_name, **shape_arg)
-        the_shape_data = the_shape.to_dict()
-        self.data = self.data | the_shape_data
+        shape_name = next(iter(shape))   # hold the shape name as STR.
+        shape_arg = shape[shape_name]   # hold the shape parameters as DICT.
+        the_shape = self.SHAPE_CLS[shape_name]['cls'](self.get_id(), shape_name, **shape_arg)   # creating the shape obj.
+        the_shape_data = the_shape.to_dict()   # hold a DICT with shape data.
+        self.data = self.data | the_shape_data   # combine new shape to the main data DICT.
         self.save_to_json()
         logger.info(f"Created new {shape_name} shape.")
         print(f"Shape {shape_name} been added.")
@@ -72,9 +72,10 @@ class ShapeManager:
         Iterates through the records in the data dictionary and outputs formatted 
         details of each shape. Logs an appropriate message if no data exists.
         """
-        if self.data:
+        if self.data:   # check if data empty.
             logger.info("Show all shapes.")
             for k,v in self.data.items():
+                # print the shapes.
                 print("============")
                 print(f'ID - {k}\n------')
                 for kk, vv in v.items():                
@@ -93,12 +94,12 @@ class ShapeManager:
             shape_id (int): The identifier of the shape to update.
             new_data (dict): A dictionary containing the updated arguments for the shape.
         """
-        shape_name = self.data[str(shape_id)]['type']
-        shape_args = new_data
-        del self.data[str(shape_id)]
-        the_shape = self.SHAPE_CLS[shape_name]['cls'](shape_id - 1, shape_name, **shape_args)
-        the_shape_data = the_shape.to_dict()
-        self.data = self.data | the_shape_data
+        shape_name = self.data[str(shape_id)]['type']   # hold the shape name as STR.
+        shape_args = new_data   # hold the shape parameters as DICT.
+        del self.data[str(shape_id)]   # del the current shape.
+        the_shape = self.SHAPE_CLS[shape_name]['cls'](shape_id - 1, shape_name, **shape_args)   # creating the shape obj.
+        the_shape_data = the_shape.to_dict()   # hold a DICT with shape data.
+        self.data = self.data | the_shape_data   # combine update shape to the main data DICT.
         self.save_to_json()
         logger.info(f"Update {shape_name} shape.")
         print(f"Shape {shape_name} been updated.")
@@ -113,8 +114,8 @@ class ShapeManager:
         logger.info("Try to delete shape by ID.")
         try:
             shape_id_int = int(shape_id)
-            if str(shape_id_int) in self.data:
-                del self.data[str(shape_id_int)]
+            if str(shape_id_int) in self.data:   # check if the exist.
+                del self.data[str(shape_id_int)]    # deleting the shape.
                 self.save_to_json()
                 print("The shape was deleted.")
                 logger.info("Deleted shape by ID.")
@@ -130,7 +131,7 @@ class ShapeManager:
         try:
             logger.info("Try loading JSON file to write.")
             with open(JSON_FILENAME, 'w') as f:
-                json.dump(self.data, f)
+                json.dump(self.data, f, indent=4)
             logger.info("dump to JSON successfully")
         except Exception as e:
             logger.error(f"JSON file not found ({e})")
@@ -154,17 +155,17 @@ class ShapeManager:
             data = {}
         return data
     
-    def get_id(self):
+    def get_id(self) -> int:
         """Determines the next available shape ID based on the maximum existing ID key.
 
         Returns:
             int: The highest current integer ID found in the database, or 0 if no data exists.
         """
-        if self.data:
-            return int(max(self.data, key=int))
-        return 0
+        if self.data:   # check if data empty.
+            return int(max(self.data, key=int))   # return the highest key as INT.
+        return 0   # if data empty.
     
-    def get_arg_by_id(self, id):
+    def get_arg_by_id(self, id) -> list | None:
         """Retrieves the expected parameter argument names for a shape type based on its ID.
 
         Args:
@@ -174,7 +175,7 @@ class ShapeManager:
             list: A list of string argument names required by the specific shape class,
                 or None if the ID does not exist in the data.
         """
-        if str(id) in self.data:
+        if str(id) in self.data:   #check if ID exist in data.
             return self.SHAPE_CLS[self.data[str(id)]['type']]['arg']
         else:
             print("There is no ID with this number.")

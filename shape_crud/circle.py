@@ -44,3 +44,6 @@ class Circle(Shape):
             "perimeter" : self.get_perimeter()
         }}
     
+if __name__ == '__main__':   # validate Class.
+    c = Circle(1, 'circle', 5)
+    print(c.to_dict())

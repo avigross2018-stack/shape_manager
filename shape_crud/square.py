@@ -42,3 +42,6 @@ class Square(Shape):
             "perimeter" : self.get_perimeter()
         }}
    
+if __name__ == '__main__':   # validate Class.
+    s = Square(1, 'square', 5)
+    print(s.to_dict())
